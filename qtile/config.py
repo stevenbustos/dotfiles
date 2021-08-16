@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2010 Aldo Cortesi
 # Copyright (c) 2010, 2014 dequis
 # Copyright (c) 2012 Randall Ma
@@ -24,15 +25,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import List  # noqa: F401
+from typing import List, Text  # noqa: F401
 
+import os
+import socket
 from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
 mod = "mod4"
-terminal = guess_terminal()
+terminal = "alacritty"
 
 keys = [
     # Switch between windows
@@ -99,14 +102,21 @@ for i in groups:
         #     desc="move focused window to group {}".format(i.name)),
     ])
 
+layout_theme = {
+    "border_width": 2,
+    "margin": 5,
+    "border_focus": "e1acff",
+    "border_normal": "1D2330"
+}
+
 layouts = [
-    layout.Columns(border_focus_stack='#d75f5f'),
+    layout.Columns(**layout_theme),
     layout.Max(),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    layout.MonadTall(),
+    # layout.MonadTall(),
     # layout.MonadWide(),
     # layout.RatioTile(),
     # layout.Tile(),
@@ -115,34 +125,112 @@ layouts = [
     # layout.Zoomy(),
 ]
 
+colors = [["#282c34", "#282c34"], # panel background
+          ["#3d3f4b", "#434758"], # background for current screen tab
+          ["#ffffff", "#ffffff"], # font color for group names
+          ["#ff5555", "#ff5555"], # border line color for current tab
+          ["#74438f", "#74438f"], # border line color for 'other tabs' and color for 'odd widgets'
+          ["#4f76c7", "#4f76c7"], # color for the 'even widgets'
+          ["#e1acff", "#e1acff"], # window name
+          ["#ecbbfb", "#ecbbfb"]] # backbround for inactive screens
+
+prompt = "{0}@{1}: ".format(os.environ["USER"], socket.gethostname())
+
 widget_defaults = dict(
-    font='sans',
-    fontsize=12,
-    padding=3,
+    font='Monaco',
+    fontsize=15,
+    padding=2,
+    background=colors[1]
 )
 extension_defaults = widget_defaults.copy()
+
+def init_widgets_list():
+    widgets_list = [
+        widget.GroupBox(
+            margin_y = 3,
+            margin_x = 0,
+            padding_y = 5,
+            padding_x = 3,
+            borderwidth = 3,
+            active = colors[2],
+            inactive = colors[7],
+            rounded = False,
+            highlight_color = colors[1],
+            highlight_method = "line",
+            this_current_screen_border = colors[6],
+            this_screen_border = colors [4],
+            other_current_screen_border = colors[6],
+            other_screen_border = colors[4],
+            foreground = colors[2],
+            background = colors[0]
+        ),
+        widget.Prompt(),
+        widget.WindowName(),
+        widget.Mpris2(
+            name='spotify',
+            objname="org.mpris.MediaPlayer2.spotify",
+            display_metadata=['xesam:title', 'xesam:artist'],
+            scroll_chars=None,
+            stop_pause_text='',
+            **widget_defaults
+        ),
+        widget.Systray(
+            background = colors[0],
+            icon_size=30,
+            padding=4
+        ),
+        widget.TextBox(
+                       text = '',
+                       background = colors[4],
+                       foreground = colors[5],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+              widget.TextBox(
+                      text = " Vol:",
+                       foreground = colors[2],
+                       background = colors[5],
+                       padding = 0
+                       ),
+        widget.Volume(
+                foreground = colors[2],
+                background = colors[5],
+                padding = 5
+                ),
+        widget.TextBox(
+                text = '',
+                background = colors[5],
+                foreground = colors[4],
+                padding = 0,
+                fontsize = 37
+                ),
+        widget.CurrentLayout(
+            foreground = colors[2],
+            background = colors[4],
+            padding = 5
+        ),
+        widget.TextBox(
+            text = '',
+            background = colors[4],
+            foreground = colors[5],
+            padding = 0,
+            fontsize = 40
+        ),
+        widget.Clock(
+            foreground = colors[2],
+            background = colors[5],
+            format = "%A, %B %d %Y - %H:%M "
+        )
+    ]
+    return widgets_list
 
 screens = [
     Screen(
         bottom=bar.Bar(
-            [
-                widget.CurrentLayout(),
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.WindowName(),
-                widget.Chord(
-                    chords_colors={
-                        'launch': ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                widget.TextBox("default config", name="default"),
-                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                widget.Systray(),
-                widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
-                widget.QuickExit(),
-            ],
-            24,
+            widgets=init_widgets_list(), 
+            opacity=1.0, 
+            margin=3,
+            size=30
         ),
         wallpaper='/home/steven/Pictures/wallpaper.jpg',
         wallpaper_mode='fill',
