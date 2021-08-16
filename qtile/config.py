@@ -29,7 +29,7 @@ from typing import List, Text  # noqa: F401
 
 import os
 import socket
-from libqtile import bar, layout, widget
+from libqtile import qtile, bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 
@@ -113,13 +113,13 @@ layout_theme = {
 }
 
 layouts = [
-    layout.Columns(**layout_theme),
-    layout.Max(),
+    # layout.Columns(**layout_theme),
+    layout.Max(**layout_theme),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    # layout.MonadTall(),
+    layout.MonadTall(**layout_theme),
     # layout.MonadWide(),
     # layout.RatioTile(),
     # layout.Tile(),
@@ -172,43 +172,80 @@ def init_widgets_list():
         widget.Mpris2(
             name='spotify',
             objname="org.mpris.MediaPlayer2.spotify",
-            display_metadata=['xesam:title', 'xesam:artist'],
+            display_metadata=[
+                'xesam:title', 
+                'xesam:artist'
+            ],
             scroll_chars=None,
-            stop_pause_text='',
-            **widget_defaults
+            stop_pause_text='Song Paused',
+            padding=5
         ),
         widget.Systray(
+            foreground = colors[2],
             background = colors[0],
             icon_size=30,
             padding=4
+        ),
+
+
+
+        widget.CheckUpdates(
+            update_interval = 1800,
+            distro = "Manjaro",
+            display_format = "{updates} Updates",
+            foreground = colors[2],
+            mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(terminal + ' -e sudo pacman -Syu')},
+            background = colors[4]
+        ),
+        widget.TextBox(
+            text = '💻',
+            background = colors[5],
+            padding = 5,
+            fontsize = 15
+        ),
+        widget.Memory(
+            foreground = colors[2],
+            background = colors[5],
+            measure_mem='M',
+            padding = 5
+        ),
+        widget.TextBox(
+            text = '🔊',
+            background = colors[5],
+            padding = 0,
+            fontsize = 20
         ),
         widget.TextBox(
             text = " Vol:",
             foreground = colors[2],
             background = colors[5],
-            padding = 0
             ),
         widget.Volume(
             foreground = colors[2],
             background = colors[5],
             padding = 5
             ),
+        widget.CurrentLayoutIcon(
+            custom_icon_paths = [os.path.expanduser("~/.config/qtile/icons")],
+            foreground = colors[0],
+            background = colors[4],
+            padding = 0,
+            scale = 0.7
+        ),
         widget.CurrentLayout(
             foreground = colors[2],
             background = colors[4],
             padding = 5
         ),
         widget.TextBox(
-            text = '',
-            background = colors[4],
-            foreground = colors[5],
-            padding = 0,
-            fontsize = 40
+            text = '⏰',
+            background = colors[5],
+            padding = 5,
+            fontsize = 20
         ),
         widget.Clock(
             foreground = colors[2],
             background = colors[5],
-            padding = 0,
             format = "%A, %B %d %Y - %H:%M "
         )
     ]

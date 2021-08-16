@@ -1,6 +1,14 @@
 *
 !.gitignore
 !/qtile/
+!/qtile/icons/
+!/qtile/icons/layout-floating.png
+!/qtile/icons/layout-max.png
+!/qtile/icons/layout-monadtall.png
+!/qtile/icons/layout-tile.png
+!/qtile/icons/layout-treetab.png
+!/qtile/icons/python-white.png
+!/qtile/icons/python.png
 !/qtile/config.py
 !/alacritty/
 !/alacritty/alacritty.yml
