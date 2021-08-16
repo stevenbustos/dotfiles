@@ -32,7 +32,6 @@ import socket
 from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
-from libqtile.utils import guess_terminal
 
 mod = "mod4"
 terminal = "alacritty"
@@ -74,6 +73,10 @@ keys = [
     Key([mod, "shift"], "Return", lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack"),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+
+    # Screenshots
+    Key(["control", "shift"], "Print", lazy.spawn(['sh', '-c', 'xfce4-screenshooter -r --save /dev/stdout | xclip -i -selection clipboard -t image/png'])),
+    Key(["control"], "Print", lazy.spawn(['sh', '-c', 'xfce4-screenshooter -f --save /dev/stdout | xclip -i -selection clipboard -t image/png'])),
 
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
@@ -180,30 +183,16 @@ def init_widgets_list():
             padding=4
         ),
         widget.TextBox(
-                       text = '',
-                       background = colors[4],
-                       foreground = colors[5],
-                       padding = 0,
-                       fontsize = 37
-                       ),
-              widget.TextBox(
-                      text = " Vol:",
-                       foreground = colors[2],
-                       background = colors[5],
-                       padding = 0
-                       ),
+            text = " Vol:",
+            foreground = colors[2],
+            background = colors[5],
+            padding = 0
+            ),
         widget.Volume(
-                foreground = colors[2],
-                background = colors[5],
-                padding = 5
-                ),
-        widget.TextBox(
-                text = '',
-                background = colors[5],
-                foreground = colors[4],
-                padding = 0,
-                fontsize = 37
-                ),
+            foreground = colors[2],
+            background = colors[5],
+            padding = 5
+            ),
         widget.CurrentLayout(
             foreground = colors[2],
             background = colors[4],
@@ -219,6 +208,7 @@ def init_widgets_list():
         widget.Clock(
             foreground = colors[2],
             background = colors[5],
+            padding = 0,
             format = "%A, %B %d %Y - %H:%M "
         )
     ]
