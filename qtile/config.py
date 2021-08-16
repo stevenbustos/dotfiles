@@ -30,13 +30,9 @@ from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
-import subprocess
 
 mod = "mod4"
 terminal = guess_terminal()
-subprocess.call(['display',
-'-window', 'root',
-'/home/steven/Pictures/wallpaper.jpg'])
 
 keys = [
     # Switch between windows
@@ -110,7 +106,7 @@ layouts = [
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
-    # layout.MonadTall(),
+    layout.MonadTall(),
     # layout.MonadWide(),
     # layout.RatioTile(),
     # layout.Tile(),
@@ -148,6 +144,8 @@ screens = [
             ],
             24,
         ),
+        wallpaper='/home/steven/Pictures/wallpaper.jpg',
+        wallpaper_mode='fill',
     ),
 ]
 
